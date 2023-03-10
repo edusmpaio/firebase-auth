@@ -1,4 +1,8 @@
+import { FormEvent, useState } from 'react'
 import { Link } from 'react-router-dom'
+
+import { createUserWithEmailAndPassword } from 'firebase/auth'
+import { auth } from '../../services/firebase'
 
 import { Button } from '../../components/Button'
 import { Header } from '../../components/Header'
@@ -8,11 +12,36 @@ import { EnvelopeSimple, Lock } from '@phosphor-icons/react'
 import { Form, SignUpContainer } from './styles'
 
 export function SignUp() {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmedPassword, setConfirmedPassword] = useState('')
+
+  function handleSignUp(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+
+    if (confirmedPassword !== password) {
+      console.log('as senhas não conferem')
+      return
+    }
+
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        const user = userCredential.user
+        console.log(user)
+      })
+      .catch((error) => {
+        const errorCode = error.code
+        const errorMessage = error.message
+
+        console.log(errorCode, errorMessage)
+      })
+  }
+
   return (
     <SignUpContainer>
       <Header subtitle="Crie sua conta!" />
 
-      <Form>
+      <Form onSubmit={handleSignUp}>
         <div>
           <label htmlFor="email">Endereço de e-mail</label>
           <Input
@@ -20,6 +49,9 @@ export function SignUp() {
             type="email"
             id="email"
             placeholder="Digite seu e-mail"
+            required
+            onChange={(e) => setEmail(e.target.value)}
+            value={email}
           />
         </div>
 
@@ -30,16 +62,22 @@ export function SignUp() {
             type="password"
             id="password"
             placeholder="Digite sua senha"
+            required
+            onChange={(e) => setPassword(e.target.value)}
+            value={password}
           />
         </div>
 
         <div>
-          <label htmlFor="password">Confirmar senha</label>
+          <label htmlFor="confirm-password">Confirmar senha</label>
           <Input
             icon={<Lock />}
             type="password"
-            id="password"
+            id="confirm-password"
             placeholder="Confirme sua senha"
+            required
+            onChange={(e) => setConfirmedPassword(e.target.value)}
+            value={confirmedPassword}
           />
         </div>
 
