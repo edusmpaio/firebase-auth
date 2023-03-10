@@ -15,6 +15,7 @@ export function SignUp() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmedPassword, setConfirmedPassword] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
 
   function handleSignUp(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -24,15 +25,18 @@ export function SignUp() {
       return
     }
 
+    setIsLoading(true)
+
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         const user = userCredential.user
+        setIsLoading(false)
         console.log(user)
       })
       .catch((error) => {
         const errorCode = error.code
         const errorMessage = error.message
-
+        setIsLoading(false)
         console.log(errorCode, errorMessage)
       })
   }
@@ -81,7 +85,9 @@ export function SignUp() {
           />
         </div>
 
-        <Button type="submit">Cadastrar</Button>
+        <Button type="submit" isLoading={isLoading}>
+          Cadastrar
+        </Button>
 
         <span>
           Já possui uma conta? <Link to="/signin">Fazer Login</Link>.
