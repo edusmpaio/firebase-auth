@@ -1,8 +1,9 @@
-import { Button } from '../../components/Button'
 import { Header } from '../../components/Header'
+import { Input } from '../../components/Input'
+import { Button } from '../../components/Button'
 
 import { EnvelopeSimple, Lock } from '@phosphor-icons/react'
-import { Form, Input, InputWrapper, SignInContainer } from './styles'
+import { Form, SignInContainer } from './styles'
 
 export function SignIn() {
   return (
@@ -12,22 +13,22 @@ export function SignIn() {
       <Form>
         <div>
           <label htmlFor="email">Endereço de e-mail</label>
-          <InputWrapper>
-            <EnvelopeSimple />
-            <Input type="email" id="email" placeholder="Digite seu e-mail" />
-          </InputWrapper>
+          <Input
+            icon={<EnvelopeSimple />}
+            type="email"
+            id="email"
+            placeholder="Digite seu e-mail"
+          />
         </div>
 
         <div>
           <label htmlFor="password">Senha</label>
-          <InputWrapper>
-            <Lock size={24} />
-            <Input
-              type="password"
-              id="password"
-              placeholder="Digite sua senha"
-            />
-          </InputWrapper>
+          <Input
+            icon={<Lock />}
+            type="password"
+            id="password"
+            placeholder="Digite sua senha"
+          />
         </div>
 
         <Button type="submit">Entrar</Button>
