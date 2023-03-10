@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 import { Header } from '../../components/Header'
 import { Input } from '../../components/Input'
 import { Button } from '../../components/Button'
@@ -34,7 +36,7 @@ export function SignIn() {
         <Button type="submit">Entrar</Button>
 
         <span>
-          Não possui uma conta? <a href="#">Registre-se</a>.
+          Não possui uma conta? <Link to="/signup">Registre-se</Link>.
         </span>
       </Form>
     </SignInContainer>

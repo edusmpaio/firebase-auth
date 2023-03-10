@@ -29,4 +29,10 @@ export const StyledInput = styled.input`
     outline: none;
     border-color: ${(props) => props.theme['blue-500']};
   }
+
+  &:-webkit-autofill {
+    box-shadow: 0 0 0 30px ${(props) => props.theme['gray-800']} inset;
+
+    -webkit-text-fill-color: ${(props) => props.theme['gray-100']};
+  }
 `
