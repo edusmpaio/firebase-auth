@@ -10,7 +10,7 @@ export const GlobalStyle = createGlobalStyle`
   body {
     min-height: 100vh;
     background: #121214;
-    color: #fff;
+    color: ${(props) => props.theme['gray-100']};
   }
 
   body, input, button {
