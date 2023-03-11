@@ -1,5 +1,9 @@
-import { FormEvent, useContext, useState } from 'react'
+import { useContext } from 'react'
 import { AuthContext } from '../../contexts/AuthContext'
+
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import * as z from 'zod'
 
 import { Link } from 'react-router-dom'
 
@@ -10,34 +14,56 @@ import { Input } from '../../components/Input'
 import { EnvelopeSimple, Lock } from '@phosphor-icons/react'
 import { Form, SignUpContainer } from './styles'
 
+const signUpFormSchema = z
+  .object({
+    email: z
+      .string()
+      .nonempty({ message: 'O e-mail é obrigatório' })
+      .email({ message: 'Digite um e-mail válido.' }),
+    password: z
+      .string()
+      .nonempty({ message: 'A senha é obrigatória' })
+      .min(6, { message: 'A senha deve conter no mínimo 6 caracteres.' }),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'As senhas não conferem.',
+    path: ['confirmPassword'],
+  })
+
+export type SignUpFormInputsType = z.infer<typeof signUpFormSchema>
+
 export function SignUp() {
   const { handleSignUp, isLoading } = useContext(AuthContext)
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SignUpFormInputsType>({
+    resolver: zodResolver(signUpFormSchema),
+    mode: 'onSubmit',
+  })
 
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [confirmedPassword, setConfirmedPassword] = useState('')
-
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-    handleSignUp(email, password)
+  function handleSignUpFormSubmit(data: SignUpFormInputsType) {
+    handleSignUp(data.email, data.password)
   }
 
   return (
     <SignUpContainer>
       <Header subtitle="Crie sua conta!" />
 
-      <Form onSubmit={handleSubmit}>
+      <Form onSubmit={handleSubmit(handleSignUpFormSubmit)}>
         <div>
           <label htmlFor="email">Endereço de e-mail</label>
           <Input
             icon={<EnvelopeSimple />}
-            type="email"
+            type="text"
             id="email"
             placeholder="Digite seu e-mail"
-            required
-            onChange={(e) => setEmail(e.target.value)}
-            value={email}
+            register={register}
+            registerName="email"
           />
+          {errors.email && <small>{errors.email?.message}</small>}
         </div>
 
         <div>
@@ -47,10 +73,10 @@ export function SignUp() {
             type="password"
             id="password"
             placeholder="Digite sua senha"
-            required
-            onChange={(e) => setPassword(e.target.value)}
-            value={password}
+            register={register}
+            registerName="password"
           />
+          {errors.password && <small>{errors.password?.message}</small>}
         </div>
 
         <div>
@@ -60,10 +86,12 @@ export function SignUp() {
             type="password"
             id="confirm-password"
             placeholder="Confirme sua senha"
-            required
-            onChange={(e) => setConfirmedPassword(e.target.value)}
-            value={confirmedPassword}
+            register={register}
+            registerName="confirmPassword"
           />
+          {errors.confirmPassword && (
+            <small>{errors.confirmPassword?.message}</small>
+          )}
         </div>
 
         <Button type="submit" isLoading={isLoading}>

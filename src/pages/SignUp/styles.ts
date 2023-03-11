@@ -6,10 +6,11 @@ export const SignUpContainer = styled.div`
   align-items: center;
   justify-content: center;
   min-height: 100vh;
+  padding: 3rem 0;
 `
 
 export const Form = styled.form`
-  max-width: 366px;
+  max-width: 400px;
   width: 100%;
 
   display: flex;
@@ -23,6 +24,13 @@ export const Form = styled.form`
     display: block;
     font-weight: 500;
     margin-bottom: 0.75rem;
+  }
+
+  small {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
+    color: ${(props) => props.theme['red-500']};
   }
 
   span {
