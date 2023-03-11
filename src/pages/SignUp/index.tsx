@@ -1,8 +1,7 @@
-import { FormEvent, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { FormEvent, useContext, useState } from 'react'
+import { AuthContext } from '../../contexts/AuthContext'
 
-import { createUserWithEmailAndPassword } from 'firebase/auth'
-import { auth } from '../../services/firebase'
+import { Link } from 'react-router-dom'
 
 import { Button } from '../../components/Button'
 import { Header } from '../../components/Header'
@@ -12,40 +11,22 @@ import { EnvelopeSimple, Lock } from '@phosphor-icons/react'
 import { Form, SignUpContainer } from './styles'
 
 export function SignUp() {
+  const { handleSignUp, isLoading } = useContext(AuthContext)
+
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmedPassword, setConfirmedPassword] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
 
-  function handleSignUp(event: FormEvent<HTMLFormElement>) {
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-
-    if (confirmedPassword !== password) {
-      console.log('as senhas não conferem')
-      return
-    }
-
-    setIsLoading(true)
-
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user
-        setIsLoading(false)
-        console.log(user)
-      })
-      .catch((error) => {
-        const errorCode = error.code
-        const errorMessage = error.message
-        setIsLoading(false)
-        console.log(errorCode, errorMessage)
-      })
+    handleSignUp(email, password)
   }
 
   return (
     <SignUpContainer>
       <Header subtitle="Crie sua conta!" />
 
-      <Form onSubmit={handleSignUp}>
+      <Form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="email">Endereço de e-mail</label>
           <Input

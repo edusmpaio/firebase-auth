@@ -1,4 +1,5 @@
 import { RouterProvider } from 'react-router-dom'
+import { AuthProvider } from './contexts/AuthContext'
 import { router } from './routes'
 
 import { ThemeProvider } from 'styled-components'
@@ -9,7 +10,10 @@ export function App() {
   return (
     <ThemeProvider theme={defaultTheme}>
       <GlobalStyle />
-      <RouterProvider router={router} />
+
+      <AuthProvider>
+        <RouterProvider router={router} />
+      </AuthProvider>
     </ThemeProvider>
   )
 }
