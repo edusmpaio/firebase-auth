@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 
-import { Link } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
 
 import { Header } from '../../components/Header'
 import { Input } from '../../components/Input'
@@ -28,7 +28,7 @@ const signInFormSchema = z.object({
 type SignInFormInputsType = z.infer<typeof signInFormSchema>
 
 export function SignIn() {
-  const { handleSignIn, isLoading } = useContext(AuthContext)
+  const { handleSignIn, isLoading, currentUser } = useContext(AuthContext)
   const {
     register,
     handleSubmit,
@@ -39,6 +39,10 @@ export function SignIn() {
 
   function handleSignInFormSubmit(data: SignInFormInputsType) {
     handleSignIn(data.email, data.password)
+  }
+
+  if (currentUser) {
+    return <Navigate to="/" replace />
   }
 
   return (

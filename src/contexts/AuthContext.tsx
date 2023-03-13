@@ -5,6 +5,8 @@ import {
   signInWithEmailAndPassword,
   User,
 } from 'firebase/auth'
+import { FirebaseError } from 'firebase/app'
+
 import { auth } from '../services/firebase'
 
 interface AuthContextType {
@@ -53,7 +55,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
       localStorage.setItem('@AuthFirebase:token', acessToken)
       localStorage.setItem('@AuthFirebase:user', JSON.stringify(user))
     } catch (error) {
-      console.log(error)
+      if (error instanceof FirebaseError) {
+        console.log(error.message)
+      }
     } finally {
       setIsLoading(false)
     }
@@ -71,7 +75,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
       localStorage.setItem('@AuthFirebase:token', acessToken)
       localStorage.setItem('@AuthFirebase:user', JSON.stringify(user))
     } catch (error) {
-      console.log(error)
+      if (error instanceof FirebaseError) {
+        console.log(error.message)
+      }
     } finally {
       setIsLoading(false)
     }

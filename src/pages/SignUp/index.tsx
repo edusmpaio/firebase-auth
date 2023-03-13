@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 
-import { Link } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
 
 import { Button } from '../../components/Button'
 import { Header } from '../../components/Header'
@@ -34,7 +34,7 @@ const signUpFormSchema = z
 type SignUpFormInputsType = z.infer<typeof signUpFormSchema>
 
 export function SignUp() {
-  const { handleSignUp, isLoading } = useContext(AuthContext)
+  const { handleSignUp, isLoading, currentUser } = useContext(AuthContext)
   const {
     register,
     handleSubmit,
@@ -46,6 +46,10 @@ export function SignUp() {
 
   function handleSignUpFormSubmit(data: SignUpFormInputsType) {
     handleSignUp(data.email, data.password)
+  }
+
+  if (currentUser) {
+    return <Navigate to="/" replace />
   }
 
   return (
