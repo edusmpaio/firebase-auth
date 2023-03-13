@@ -1,8 +1,9 @@
-import { createContext, ReactNode, useState } from 'react'
+import { createContext, ReactNode, useEffect, useState } from 'react'
 
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  User,
 } from 'firebase/auth'
 import { auth } from '../services/firebase'
 
@@ -10,6 +11,7 @@ interface AuthContextType {
   handleSignUp: (email: string, password: string) => void
   handleSignIn: (email: string, password: string) => void
   isLoading: boolean
+  currentUser: User | null
 }
 
 interface AuthProviderProps {
@@ -19,38 +21,66 @@ interface AuthProviderProps {
 export const AuthContext = createContext({} as AuthContextType)
 
 export function AuthProvider({ children }: AuthProviderProps) {
+  const [currentUser, setCurrentUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(false)
 
-  function handleSignUp(email: string, password: string) {
+  useEffect(() => {
+    const loadStoredUserInfo = () => {
+      const storageToken = localStorage.getItem('@AuthFirebase:token')
+      const storageUser = localStorage.getItem('@AuthFirebase:user')
+
+      if (storageUser && storageToken) {
+        setCurrentUser(JSON.parse(storageUser))
+      }
+    }
+
+    loadStoredUserInfo()
+  }, [])
+
+  async function handleSignUp(email: string, password: string) {
     setIsLoading(true)
 
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((response) => {
-        const user = response.user
-        console.log(user)
-      })
-      .catch((error) => {
-        console.log(error.message)
-      })
-      .finally(() => setIsLoading(false))
+    try {
+      const response = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password,
+      )
+      const user = response.user
+      const acessToken = await user.getIdToken()
+
+      setCurrentUser(user)
+      localStorage.setItem('@AuthFirebase:token', acessToken)
+      localStorage.setItem('@AuthFirebase:user', JSON.stringify(user))
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
-  function handleSignIn(email: string, password: string) {
+  async function handleSignIn(email: string, password: string) {
     setIsLoading(true)
 
-    signInWithEmailAndPassword(auth, email, password)
-      .then((response) => {
-        const user = response.user
-        console.log(user)
-      })
-      .catch((error) => {
-        console.log(error.message)
-      })
-      .finally(() => setIsLoading(false))
+    try {
+      const response = await signInWithEmailAndPassword(auth, email, password)
+      const user = response.user
+      const acessToken = await user.getIdToken()
+
+      setCurrentUser(user)
+      localStorage.setItem('@AuthFirebase:token', acessToken)
+      localStorage.setItem('@AuthFirebase:user', JSON.stringify(user))
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
-    <AuthContext.Provider value={{ handleSignUp, handleSignIn, isLoading }}>
+    <AuthContext.Provider
+      value={{ handleSignUp, handleSignIn, isLoading, currentUser }}
+    >
       {children}
     </AuthContext.Provider>
   )
