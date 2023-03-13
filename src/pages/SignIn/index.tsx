@@ -1,7 +1,11 @@
-import { Link } from 'react-router-dom'
-
-import { FormEvent, useContext, useState } from 'react'
+import { useContext } from 'react'
 import { AuthContext } from '../../contexts/AuthContext'
+
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import * as z from 'zod'
+
+import { Link } from 'react-router-dom'
 
 import { Header } from '../../components/Header'
 import { Input } from '../../components/Input'
@@ -10,31 +14,49 @@ import { Button } from '../../components/Button'
 import { EnvelopeSimple, Lock } from '@phosphor-icons/react'
 import { Form, SignInContainer } from './styles'
 
+const signInFormSchema = z.object({
+  email: z
+    .string()
+    .nonempty({ message: 'O e-mail é obrigatório' })
+    .email({ message: 'Digite um e-mail válido.' }),
+  password: z
+    .string()
+    .nonempty({ message: 'A senha é obrigatória' })
+    .min(6, { message: 'A senha deve conter no mínimo 6 caracteres.' }),
+})
+
+type SignInFormInputsType = z.infer<typeof signInFormSchema>
+
 export function SignIn() {
   const { handleSignIn, isLoading } = useContext(AuthContext)
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SignInFormInputsType>({
+    resolver: zodResolver(signInFormSchema),
+  })
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-    handleSignIn(email, password)
+  function handleSignInFormSubmit(data: SignInFormInputsType) {
+    handleSignIn(data.email, data.password)
   }
 
   return (
     <SignInContainer>
       <Header subtitle="Faça login e comece a usar!" />
 
-      <Form onSubmit={handleSubmit}>
+      <Form onSubmit={handleSubmit(handleSignInFormSubmit)}>
         <div>
           <label htmlFor="email">Endereço de e-mail</label>
           <Input
             icon={<EnvelopeSimple />}
-            type="email"
+            type="text"
             id="email"
             placeholder="Digite seu e-mail"
-            onChange={(e) => setEmail(e.target.value)}
-            value={email}
+            register={register}
+            registerName="email"
           />
+          {errors.email && <small>{errors.email?.message}</small>}
         </div>
 
         <div>
@@ -44,9 +66,10 @@ export function SignIn() {
             type="password"
             id="password"
             placeholder="Digite sua senha"
-            onChange={(e) => setPassword(e.target.value)}
-            value={password}
+            register={register}
+            registerName="password"
           />
+          {errors.password && <small>{errors.password?.message}</small>}
         </div>
 
         <Button type="submit" isLoading={isLoading}>

@@ -25,6 +25,13 @@ export const Form = styled.form`
     margin-bottom: 0.75rem;
   }
 
+  small {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
+    color: ${(props) => props.theme['red-500']};
+  }
+
   span {
     text-align: center;
     color: ${(props) => props.theme['gray-200']};

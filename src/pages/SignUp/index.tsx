@@ -31,7 +31,7 @@ const signUpFormSchema = z
     path: ['confirmPassword'],
   })
 
-export type SignUpFormInputsType = z.infer<typeof signUpFormSchema>
+type SignUpFormInputsType = z.infer<typeof signUpFormSchema>
 
 export function SignUp() {
   const { handleSignUp, isLoading } = useContext(AuthContext)

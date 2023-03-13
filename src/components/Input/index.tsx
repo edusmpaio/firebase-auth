@@ -1,12 +1,11 @@
 import { InputHTMLAttributes, ReactNode } from 'react'
 import { UseFormRegister } from 'react-hook-form'
-import { SignUpFormInputsType } from '../../pages/SignUp'
 
 import { InputWrapper, StyledInput } from './styles'
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   icon: ReactNode
-  register: UseFormRegister<SignUpFormInputsType>
+  register: UseFormRegister<any>
   registerName: 'email' | 'password' | 'confirmPassword'
 }
 
