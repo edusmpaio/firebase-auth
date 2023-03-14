@@ -5,7 +5,6 @@ import {
   signInWithEmailAndPassword,
   User,
 } from 'firebase/auth'
-import { FirebaseError } from 'firebase/app'
 
 import { auth } from '../services/firebase'
 
@@ -14,6 +13,7 @@ interface AuthContextType {
   handleSignIn: (email: string, password: string) => void
   isLoading: boolean
   currentUser: User | null
+  onFirebaseError: (errorCode: string) => string
 }
 
 interface AuthProviderProps {
@@ -39,6 +39,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
     loadStoredUserInfo()
   }, [])
 
+  function setCurrentUserAndSaveOnLocalStorage(user: User, token: string) {
+    setCurrentUser(user)
+    localStorage.setItem('@AuthFirebase:token', token)
+    localStorage.setItem('@AuthFirebase:user', JSON.stringify(user))
+  }
+
   async function handleSignUp(email: string, password: string) {
     setIsLoading(true)
 
@@ -49,17 +55,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
         password,
       )
       const user = response.user
-      const acessToken = await user.getIdToken()
+      const accessToken = await user.getIdToken()
 
-      setCurrentUser(user)
-      localStorage.setItem('@AuthFirebase:token', acessToken)
-      localStorage.setItem('@AuthFirebase:user', JSON.stringify(user))
+      setCurrentUserAndSaveOnLocalStorage(user, accessToken)
     } catch (error) {
-      if (error instanceof FirebaseError) {
-        console.log(error.message)
-      }
-    } finally {
       setIsLoading(false)
+      throw error
     }
   }
 
@@ -69,23 +70,39 @@ export function AuthProvider({ children }: AuthProviderProps) {
     try {
       const response = await signInWithEmailAndPassword(auth, email, password)
       const user = response.user
-      const acessToken = await user.getIdToken()
+      const accessToken = await user.getIdToken()
 
-      setCurrentUser(user)
-      localStorage.setItem('@AuthFirebase:token', acessToken)
-      localStorage.setItem('@AuthFirebase:user', JSON.stringify(user))
+      setCurrentUserAndSaveOnLocalStorage(user, accessToken)
     } catch (error) {
-      if (error instanceof FirebaseError) {
-        console.log(error.message)
-      }
-    } finally {
       setIsLoading(false)
+      throw error
+    }
+  }
+
+  function onFirebaseError(errorCode: string) {
+    switch (errorCode) {
+      case 'auth/user-not-found':
+        return 'Usuário não encontrado.'
+      case 'auth/wrong-password':
+        return 'Senha incorreta.'
+      case 'auth/too-many-requests':
+        return 'Acesso temporariamente desativado devido a muitas tentativas de login malsucedidas.'
+      case 'auth/email-already-in-use':
+        return 'Esse e-mail já está sendo utilizado.'
+      default:
+        return 'Ocorreu um erro inesperado. Tente novamente.'
     }
   }
 
   return (
     <AuthContext.Provider
-      value={{ handleSignUp, handleSignIn, isLoading, currentUser }}
+      value={{
+        handleSignUp,
+        handleSignIn,
+        isLoading,
+        currentUser,
+        onFirebaseError,
+      }}
     >
       {children}
     </AuthContext.Provider>

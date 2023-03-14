@@ -7,6 +7,10 @@ export const GlobalStyle = createGlobalStyle`
     box-sizing: border-box;
   }
 
+  :root {
+    --toastify-color-error: ${(props) => props.theme['red-700']};
+  }
+
   body {
     min-height: 100vh;
     background: #121214;

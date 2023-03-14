@@ -1,5 +1,6 @@
 import { useContext } from 'react'
 import { AuthContext } from '../../contexts/AuthContext'
+import { FirebaseError } from 'firebase/app'
 
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -13,6 +14,7 @@ import { Button } from '../../components/Button'
 
 import { EnvelopeSimple, Lock } from '@phosphor-icons/react'
 import { Form, SignInContainer } from './styles'
+import { toast } from 'react-toastify'
 
 const signInFormSchema = z.object({
   email: z
@@ -28,17 +30,26 @@ const signInFormSchema = z.object({
 type SignInFormInputsType = z.infer<typeof signInFormSchema>
 
 export function SignIn() {
-  const { handleSignIn, isLoading, currentUser } = useContext(AuthContext)
+  const { handleSignIn, isLoading, currentUser, onFirebaseError } =
+    useContext(AuthContext)
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<SignInFormInputsType>({
     resolver: zodResolver(signInFormSchema),
+    shouldUnregister: false,
   })
 
-  function handleSignInFormSubmit(data: SignInFormInputsType) {
-    handleSignIn(data.email, data.password)
+  async function handleSignInFormSubmit(data: SignInFormInputsType) {
+    try {
+      await handleSignIn(data.email, data.password)
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        const errorMessage = onFirebaseError(error.code)
+        toast.error(errorMessage, { autoClose: 3000, theme: 'colored' })
+      }
+    }
   }
 
   if (currentUser) {

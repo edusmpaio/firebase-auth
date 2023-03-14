@@ -1,5 +1,6 @@
 import { useContext } from 'react'
 import { AuthContext } from '../../contexts/AuthContext'
+import { FirebaseError } from 'firebase/app'
 
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -13,6 +14,7 @@ import { Input } from '../../components/Input'
 
 import { EnvelopeSimple, Lock } from '@phosphor-icons/react'
 import { Form, SignUpContainer } from './styles'
+import { toast } from 'react-toastify'
 
 const signUpFormSchema = z
   .object({
@@ -24,7 +26,9 @@ const signUpFormSchema = z
       .string()
       .nonempty({ message: 'A senha é obrigatória' })
       .min(6, { message: 'A senha deve conter no mínimo 6 caracteres.' }),
-    confirmPassword: z.string(),
+    confirmPassword: z
+      .string()
+      .nonempty({ message: 'A confirmação de senha é obrigatória' }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: 'As senhas não conferem.',
@@ -34,7 +38,8 @@ const signUpFormSchema = z
 type SignUpFormInputsType = z.infer<typeof signUpFormSchema>
 
 export function SignUp() {
-  const { handleSignUp, isLoading, currentUser } = useContext(AuthContext)
+  const { handleSignUp, isLoading, currentUser, onFirebaseError } =
+    useContext(AuthContext)
   const {
     register,
     handleSubmit,
@@ -44,8 +49,15 @@ export function SignUp() {
     mode: 'onSubmit',
   })
 
-  function handleSignUpFormSubmit(data: SignUpFormInputsType) {
-    handleSignUp(data.email, data.password)
+  async function handleSignUpFormSubmit(data: SignUpFormInputsType) {
+    try {
+      await handleSignUp(data.email, data.password)
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        const errorMessage = onFirebaseError(error.code)
+        toast.error(errorMessage, { autoClose: 3000, theme: 'colored' })
+      }
+    }
   }
 
   if (currentUser) {
