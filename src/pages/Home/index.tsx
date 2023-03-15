@@ -1,6 +1,16 @@
 import firebaseLogo from '../../assets/firebase-logo.svg'
 import { Fire, SignOut } from '@phosphor-icons/react'
-import { HeaderContainer, HeaderContent, Logo, MainContainer } from './styles'
+
+import * as AlertDialog from '@radix-ui/react-alert-dialog'
+import { SignOutModal } from './components/SignOutModal'
+
+import {
+  HeaderContainer,
+  HeaderContent,
+  Logo,
+  MainContainer,
+  SignOutButton,
+} from './styles'
 
 export function Home() {
   return (
@@ -12,9 +22,15 @@ export function Home() {
             <strong>Dashboard</strong>
           </Logo>
 
-          <button>
-            <SignOut size={24} fill="#fff" />
-          </button>
+          <AlertDialog.Root>
+            <AlertDialog.Trigger asChild>
+              <SignOutButton>
+                <SignOut size={24} fill="#fff" />
+              </SignOutButton>
+            </AlertDialog.Trigger>
+
+            <SignOutModal />
+          </AlertDialog.Root>
         </HeaderContent>
       </HeaderContainer>
 

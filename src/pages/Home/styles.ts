@@ -13,20 +13,6 @@ export const HeaderContent = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-
-  button {
-    background: ${(props) => props.theme['red-700']};
-    border: none;
-    width: 2.25rem;
-    height: 2.25rem;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-
-    &:hover {
-      background: ${(props) => props.theme['red-800']};
-    }
-  }
 `
 
 export const Logo = styled.div`
@@ -43,6 +29,20 @@ export const Logo = styled.div`
   }
 `
 
+export const SignOutButton = styled.button`
+  background: ${(props) => props.theme['red-700']};
+  border: none;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background: ${(props) => props.theme['red-800']};
+  }
+`
+
 export const MainContainer = styled.main`
   min-height: calc(100vh - 78px);
   display: flex;
@@ -53,6 +53,7 @@ export const MainContainer = styled.main`
     display: flex;
     flex-direction: column;
     align-items: center;
+    text-align: center;
     gap: 1rem;
     color: ${(props) => props.theme['gray-400']};
     opacity: 0.7;
