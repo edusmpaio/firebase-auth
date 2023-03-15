@@ -30,7 +30,7 @@ const signInFormSchema = z.object({
 type SignInFormInputsType = z.infer<typeof signInFormSchema>
 
 export function SignIn() {
-  const { handleSignIn, isLoading, currentUser, onFirebaseError } =
+  const { handleSignIn, isAuthLoading, currentUser, onFirebaseError } =
     useContext(AuthContext)
   const {
     register,
@@ -87,7 +87,7 @@ export function SignIn() {
           {errors.password && <small>{errors.password?.message}</small>}
         </div>
 
-        <Button type="submit" isLoading={isLoading}>
+        <Button type="submit" isLoading={isAuthLoading}>
           Entrar
         </Button>
 

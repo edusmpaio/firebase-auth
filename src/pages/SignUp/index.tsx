@@ -38,7 +38,7 @@ const signUpFormSchema = z
 type SignUpFormInputsType = z.infer<typeof signUpFormSchema>
 
 export function SignUp() {
-  const { handleSignUp, isLoading, currentUser, onFirebaseError } =
+  const { handleSignUp, isAuthLoading, currentUser, onFirebaseError } =
     useContext(AuthContext)
   const {
     register,
@@ -110,7 +110,7 @@ export function SignUp() {
           )}
         </div>
 
-        <Button type="submit" isLoading={isLoading}>
+        <Button type="submit" isLoading={isAuthLoading}>
           Cadastrar
         </Button>
 

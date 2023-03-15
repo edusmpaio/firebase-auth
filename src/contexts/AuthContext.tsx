@@ -2,16 +2,18 @@ import { createContext, ReactNode, useEffect, useState } from 'react'
 
 import {
   createUserWithEmailAndPassword,
+  onAuthStateChanged,
   signInWithEmailAndPassword,
   User,
 } from 'firebase/auth'
 
 import { auth } from '../services/firebase'
+import { Loader } from '../components/Loader'
 
 interface AuthContextType {
   handleSignUp: (email: string, password: string) => void
   handleSignIn: (email: string, password: string) => void
-  isLoading: boolean
+  isAuthLoading: boolean
   currentUser: User | null
   onFirebaseError: (errorCode: string) => string
 }
@@ -23,20 +25,26 @@ interface AuthProviderProps {
 export const AuthContext = createContext({} as AuthContextType)
 
 export function AuthProvider({ children }: AuthProviderProps) {
+  const [isPageLoading, setIsPageLoading] = useState(true)
   const [currentUser, setCurrentUser] = useState<User | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
+  const [isAuthLoading, setIsAuthLoading] = useState(false)
 
   useEffect(() => {
-    const loadStoredUserInfo = () => {
-      const storageToken = localStorage.getItem('@AuthFirebase:token')
-      const storageUser = localStorage.getItem('@AuthFirebase:user')
+    const subscriber = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        console.log(auth.currentUser)
+        const storageToken = localStorage.getItem('@AuthFirebase:token')
+        const storageUser = localStorage.getItem('@AuthFirebase:user')
 
-      if (storageUser && storageToken) {
-        setCurrentUser(JSON.parse(storageUser))
+        if (storageUser && storageToken) {
+          setCurrentUser(JSON.parse(storageUser))
+        }
+
+        setIsPageLoading(false)
       }
-    }
+    })
 
-    loadStoredUserInfo()
+    return subscriber
   }, [])
 
   function setCurrentUserAndSaveOnLocalStorage(user: User, token: string) {
@@ -46,7 +54,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }
 
   async function handleSignUp(email: string, password: string) {
-    setIsLoading(true)
+    setIsAuthLoading(true)
 
     try {
       const response = await createUserWithEmailAndPassword(
@@ -59,13 +67,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       setCurrentUserAndSaveOnLocalStorage(user, accessToken)
     } catch (error) {
-      setIsLoading(false)
+      setIsAuthLoading(false)
       throw error
     }
   }
 
   async function handleSignIn(email: string, password: string) {
-    setIsLoading(true)
+    setIsAuthLoading(true)
 
     try {
       const response = await signInWithEmailAndPassword(auth, email, password)
@@ -74,7 +82,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       setCurrentUserAndSaveOnLocalStorage(user, accessToken)
     } catch (error) {
-      setIsLoading(false)
+      setIsAuthLoading(false)
       throw error
     }
   }
@@ -94,12 +102,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }
 
+  if (isPageLoading) {
+    return <Loader />
+  }
+
   return (
     <AuthContext.Provider
       value={{
         handleSignUp,
         handleSignIn,
-        isLoading,
+        isAuthLoading,
         currentUser,
         onFirebaseError,
       }}
