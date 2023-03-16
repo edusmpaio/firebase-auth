@@ -13,7 +13,7 @@ export const LoaderContainer = styled.div`
   justify-content: center;
 
   svg {
-    animation: ${spin} 0.7s linear infinite;
+    animation: ${spin} 1s linear infinite;
     color: ${(props) => props.theme['blue-500']};
   }
 `

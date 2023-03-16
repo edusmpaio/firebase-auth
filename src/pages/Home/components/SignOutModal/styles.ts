@@ -1,5 +1,27 @@
-import styled from 'styled-components'
+import styled, { keyframes } from 'styled-components'
 import * as AlertDialog from '@radix-ui/react-alert-dialog'
+
+const overlayShow = keyframes`
+  from {
+    opacity: 0;
+  }
+
+  to { 
+    opacity: 1;
+  }
+`
+
+const contentShow = keyframes`
+  from {
+    opacity: 0;
+    transform: translate(-50%, -40%);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+`
 
 export const Overlay = styled(AlertDialog.Overlay)`
   position: fixed;
@@ -7,6 +29,8 @@ export const Overlay = styled(AlertDialog.Overlay)`
   height: 100vh;
   inset: 0;
   background: rgba(0, 0, 0, 0.75);
+
+  animation: ${overlayShow} 0.2s ease;
 `
 
 export const Content = styled(AlertDialog.Content)`
@@ -24,6 +48,8 @@ export const Content = styled(AlertDialog.Content)`
   gap: 2rem;
   text-align: center;
   border-radius: 6px;
+
+  animation: ${contentShow} 0.2s ease;
 
   div {
     display: flex;
