@@ -38,6 +38,10 @@ export const SignOutButton = styled.button`
   cursor: pointer;
   transition: background-color 0.2s;
 
+  svg {
+    font-size: 1.5rem;
+  }
+
   &:hover {
     background: ${(props) => props.theme['red-800']};
   }
@@ -50,6 +54,7 @@ export const MainContainer = styled.main`
   justify-content: center;
 
   div {
+    padding: 1.25rem;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -57,6 +62,10 @@ export const MainContainer = styled.main`
     gap: 1rem;
     color: ${(props) => props.theme['gray-400']};
     opacity: 0.7;
+
+    svg {
+      font-size: 6rem;
+    }
 
     strong {
       font-size: 1.5rem;

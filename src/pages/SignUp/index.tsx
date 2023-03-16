@@ -91,6 +91,7 @@ export function SignUp() {
             placeholder="Digite sua senha"
             register={register}
             registerName="password"
+            autoComplete="on"
           />
           {errors.password && <small>{errors.password?.message}</small>}
         </div>
@@ -104,6 +105,7 @@ export function SignUp() {
             placeholder="Confirme sua senha"
             register={register}
             registerName="confirmPassword"
+            autoComplete="on"
           />
           {errors.confirmPassword && (
             <small>{errors.confirmPassword?.message}</small>

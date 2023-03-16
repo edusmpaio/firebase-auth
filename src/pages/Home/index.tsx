@@ -25,7 +25,7 @@ export function Home() {
           <AlertDialog.Root>
             <AlertDialog.Trigger asChild>
               <SignOutButton>
-                <SignOut size={24} fill="#fff" />
+                <SignOut fill="#fff" />
               </SignOutButton>
             </AlertDialog.Trigger>
 
@@ -36,7 +36,7 @@ export function Home() {
 
       <MainContainer>
         <div>
-          <Fire size={98} />
+          <Fire />
           <strong>Placeholder</strong>
           <p>Ops! Não há nada para ver aqui no momento</p>
         </div>

@@ -83,6 +83,7 @@ export function SignIn() {
             placeholder="Digite sua senha"
             register={register}
             registerName="password"
+            autoComplete="on"
           />
           {errors.password && <small>{errors.password?.message}</small>}
         </div>

@@ -5,7 +5,7 @@ export const HeaderContainer = styled.header`
   margin-bottom: 2.625rem;
 
   img {
-    height: 64px;
+    height: 4rem;
   }
 
   h2 {

@@ -9,7 +9,8 @@ export const SignInContainer = styled.div`
 `
 
 export const Form = styled.form`
-  max-width: 366px;
+  max-width: 25.375rem; // 406px
+  padding: 0 1.25rem;
   width: 100%;
 
   display: flex;

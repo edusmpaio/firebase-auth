@@ -57,7 +57,7 @@ export const Content = styled(AlertDialog.Content)`
     gap: 1rem;
 
     @media (max-width: 556px) {
-      flex-direction: column;
+      flex-direction: column-reverse;
     }
   }
 `

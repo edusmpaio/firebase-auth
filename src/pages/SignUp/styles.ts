@@ -10,8 +10,9 @@ export const SignUpContainer = styled.div`
 `
 
 export const Form = styled.form`
-  max-width: 400px;
+  max-width: 25.375rem; // 406px
   width: 100%;
+  padding: 0 1.25rem;
 
   display: flex;
   flex-direction: column;

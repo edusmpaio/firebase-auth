@@ -20,4 +20,10 @@ export const GlobalStyle = createGlobalStyle`
   body, input, button {
     font-family: 'Roboto', sans-serif;
   }
+
+  @media (max-width: 400px) {
+    html {
+      font-size: 87.5%;
+    }
+  }
 `
