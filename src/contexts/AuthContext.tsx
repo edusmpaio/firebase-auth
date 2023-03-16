@@ -54,9 +54,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const user = response.user
 
       setCurrentUser(user)
-    } catch (error) {
+    } finally {
       setIsAuthLoading(false)
-      throw error
     }
   }
 
@@ -68,20 +67,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const user = response.user
 
       setCurrentUser(user)
-    } catch (error) {
+    } finally {
       setIsAuthLoading(false)
-      throw error
     }
   }
 
-  async function handleSignOut() {
-    signOut(auth)
-      .then(() => {
-        setCurrentUser(null)
-      })
-      .catch((error) => {
-        throw error
-      })
+  function handleSignOut() {
+    signOut(auth).then(() => setCurrentUser(null))
   }
 
   function onFirebaseError(errorCode: string) {
