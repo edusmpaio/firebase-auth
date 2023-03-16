@@ -1,4 +1,3 @@
-import firebaseLogo from '../../assets/firebase-logo.svg'
 import { Fire, SignOut } from '@phosphor-icons/react'
 
 import * as AlertDialog from '@radix-ui/react-alert-dialog'
@@ -18,7 +17,7 @@ export function Home() {
       <HeaderContainer>
         <HeaderContent>
           <Logo>
-            <img src={firebaseLogo} alt="Logo Firebase" />
+            <img src="/firebase-logo.svg" alt="Logo Firebase" />
             <strong>Dashboard</strong>
           </Logo>
 

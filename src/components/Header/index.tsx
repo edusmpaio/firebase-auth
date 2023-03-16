@@ -1,5 +1,3 @@
-import firebaseLogo from '../../assets/firebase-logo.svg'
-
 import { HeaderContainer } from './styles'
 
 interface HeaderProps {
@@ -9,7 +7,7 @@ interface HeaderProps {
 export function Header({ subtitle }: HeaderProps) {
   return (
     <HeaderContainer>
-      <img src={firebaseLogo} alt="Logo do Firebase" />
+      <img src="/firebase-logo.svg" alt="Logo do Firebase" />
       <h2>Firebase Auth</h2>
       <span>{subtitle}</span>
     </HeaderContainer>
