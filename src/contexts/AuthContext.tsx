@@ -4,6 +4,7 @@ import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
   signInWithEmailAndPassword,
+  signOut,
   User,
 } from 'firebase/auth'
 
@@ -13,6 +14,7 @@ import { Loader } from '../components/Loader'
 interface AuthContextType {
   handleSignUp: (email: string, password: string) => void
   handleSignIn: (email: string, password: string) => void
+  handleSignOut: () => void
   isAuthLoading: boolean
   currentUser: User | null
   onFirebaseError: (errorCode: string) => string
@@ -32,26 +34,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     const subscriber = onAuthStateChanged(auth, (user) => {
       if (user) {
-        console.log(auth.currentUser)
-        const storageToken = localStorage.getItem('@AuthFirebase:token')
-        const storageUser = localStorage.getItem('@AuthFirebase:user')
-
-        if (storageUser && storageToken) {
-          setCurrentUser(JSON.parse(storageUser))
-        }
-
-        setIsPageLoading(false)
+        setCurrentUser(auth.currentUser)
       }
+      setIsPageLoading(false)
     })
 
     return subscriber
   }, [])
-
-  function setCurrentUserAndSaveOnLocalStorage(user: User, token: string) {
-    setCurrentUser(user)
-    localStorage.setItem('@AuthFirebase:token', token)
-    localStorage.setItem('@AuthFirebase:user', JSON.stringify(user))
-  }
 
   async function handleSignUp(email: string, password: string) {
     setIsAuthLoading(true)
@@ -63,9 +52,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
         password,
       )
       const user = response.user
-      const accessToken = await user.getIdToken()
 
-      setCurrentUserAndSaveOnLocalStorage(user, accessToken)
+      setCurrentUser(user)
     } catch (error) {
       setIsAuthLoading(false)
       throw error
@@ -78,13 +66,22 @@ export function AuthProvider({ children }: AuthProviderProps) {
     try {
       const response = await signInWithEmailAndPassword(auth, email, password)
       const user = response.user
-      const accessToken = await user.getIdToken()
 
-      setCurrentUserAndSaveOnLocalStorage(user, accessToken)
+      setCurrentUser(user)
     } catch (error) {
       setIsAuthLoading(false)
       throw error
     }
+  }
+
+  async function handleSignOut() {
+    signOut(auth)
+      .then(() => {
+        setCurrentUser(null)
+      })
+      .catch((error) => {
+        throw error
+      })
   }
 
   function onFirebaseError(errorCode: string) {
@@ -111,6 +108,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       value={{
         handleSignUp,
         handleSignIn,
+        handleSignOut,
         isAuthLoading,
         currentUser,
         onFirebaseError,
